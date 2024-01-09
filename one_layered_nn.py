@@ -40,7 +40,7 @@ def initialize_parameters():
 
     E_max = 1  # maximal error
     lr = 0.01
-    num_epochs = 1000
+    num_epochs = 10
 
     return W, b, E_max, lr, num_epochs
 
@@ -109,16 +109,30 @@ def do_inference(W, b, test_data):
         if (y == u_vec).all():
             num_correct += 1
 
+        visualize_points_clusters(x, y)
+
     accuracy = num_correct / len(test_data)
+    plt.grid()
+    plt.show()
 
     return int(E), accuracy
 
 
+def visualize_points_clusters(x, y):
+    vector = x
+    colors = ["red", "green", "blue", "purple", "orange"]
+    color_idx = [i for i, x in enumerate(y) if x > 0][0]
+    plt.scatter(vector[0], vector[1], c=colors[color_idx])
+    plt.title('Clusters (test data)')
+    plt.xlabel('x')
+    plt.ylabel('y')
+
+
 def visualize_errors(errors):
     plt.plot(range(len(errors)), errors)
-    plt.plot(range(len(errors)), errors, 'bo')
-    plt.xticks(range(1, len(errors)))
-    plt.title('Error analysis')
+    # plt.plot(range(len(errors)), errors, 'bo')
+    plt.xticks(range(0, len(errors)))
+    plt.title('Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Error')
     plt.grid()
@@ -159,11 +173,19 @@ def visualize_data_histogram(data):
     plt.show()
 
 
+def get_xy_min_max(data: list):
+    x_values = []
+    y_values = []
+
+    for vector in data:
+        x_values.append(vector[0])
+        y_values.append(vector[1])
+
+    return min(x_values), max(x_values), min(y_values), max(y_values)
+
+
 def visualize_result(data, W, b, data_type: str):
-    x_max = 4 # TODO
-    x_min = -7
-    y_max = 5
-    y_min = -6.3
+    x_min, x_max, y_min, y_max = get_xy_min_max(data)
 
     for i in range(len(data)):
         vector = data[i][0:2]
