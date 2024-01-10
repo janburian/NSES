@@ -23,6 +23,7 @@ def load_data(data_path: Path):
 
     return data
 
+
 def split_data_train_test(data: list):
     # Splitting data (80% training, 20% testing)
     split_index = int(0.8 * len(data))
@@ -53,7 +54,7 @@ def get_output_vector(u: float):
     return output_vec.reshape(-1, 1)
 
 
-def train_one_layered_nn(train_data):
+def train_one_layered_nn(train_data: list):
     W, b, E_max, lr, num_epochs = initialize_parameters()
 
     errors = []
@@ -88,7 +89,7 @@ def train_one_layered_nn(train_data):
     return W, b, errors
 
 
-def do_inference(W, b, test_data):
+def do_inference(W: np.array, b: np.array, test_data: list):
     E = 0
     num_correct = 0
 
@@ -118,7 +119,7 @@ def do_inference(W, b, test_data):
     return int(E), accuracy
 
 
-def visualize_points_clusters(x, y):
+def visualize_points_clusters(x: np.array, y: np.array):
     vector = x
     colors = ["red", "green", "blue", "purple", "orange"]
     color_idx = [i for i, x in enumerate(y) if x > 0][0]
@@ -128,7 +129,7 @@ def visualize_points_clusters(x, y):
     plt.ylabel('y')
 
 
-def visualize_errors(errors):
+def visualize_errors(errors: list):
     plt.plot(range(len(errors)), errors)
     # plt.plot(range(len(errors)), errors, 'bo')
     plt.xticks(range(0, len(errors)))
@@ -139,7 +140,7 @@ def visualize_errors(errors):
     plt.show()
 
 
-def visualize_data(data):
+def visualize_data(data: list):
     for i in range(len(data)):
         vector = data[i][0:2]
         plt.scatter(vector[0], vector[1])
@@ -151,7 +152,7 @@ def visualize_data(data):
     plt.show()
 
 
-def visualize_data_histogram(data):
+def visualize_data_histogram(data: list):
     class_dict = {"1.0": 0, "2.0": 0, "3.0": 0, "4.0": 0, "5.0": 0}
     for i in range(len(data)):
         target = str(data[i][2])
@@ -184,7 +185,7 @@ def get_xy_min_max(data: list):
     return min(x_values), max(x_values), min(y_values), max(y_values)
 
 
-def visualize_result(data, W, b, data_type: str):
+def visualize_result(data: list, W: np.array, b: np.array, data_type: str):
     x_min, x_max, y_min, y_max = get_xy_min_max(data)
 
     for i in range(len(data)):

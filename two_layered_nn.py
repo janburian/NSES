@@ -35,7 +35,7 @@ def split_data_train_test(data: list):
     return train_data, test_data
 
 
-def visualize_data(data):
+def visualize_data(data: list):
     for i in range(len(data)):
         vector = data[i][0:2]
         plt.scatter(vector[0], vector[1])
@@ -47,7 +47,7 @@ def visualize_data(data):
     plt.show()
 
 
-def visualize_data_histogram(data):
+def visualize_data_histogram(data: list):
     class_dict = {"1.0": 0, "2.0": 0, "3.0": 0, "4.0": 0, "5.0": 0}
     for i in range(len(data)):
         target = str(data[i][2])
@@ -83,26 +83,30 @@ def initialize_parameters():
 
     return W, V, b, d, E_max, lr, num_epochs
 
+
 def get_output_vector(u: float):
     output_vec = np.array([0, 0, 0, 0, 0])
     output_vec[int(u)-1] = 1
 
     return output_vec.reshape(-1, 1)
 
+
 def activation_function(x: np.array, type_act_func: str):
     if type_act_func == "sigmoid":
-        return 1 / (1 + np.exp(-x))
+        return np.exp(x) / (1 + np.exp(x))
 
     elif type_act_func == "ReLU":
         # return np.maximum(0, x)
         return np.where(np.asarray(x) > 0, x, 0)
 
-def derivate_activation_function(f, activation_function: str):
+
+def derivate_activation_function(f: np.array, activation_function: str):
     if activation_function == "sigmoid":
         return f * (1 - f)
 
     if activation_function == "ReLU":
         return np.where(f > 0, 1, 0)
+
 
 def train_two_layered_nn(train_data: list, type_act_func: str):
     W, V, b, d, E_max, lr, num_epochs = initialize_parameters()
@@ -145,19 +149,21 @@ def train_two_layered_nn(train_data: list, type_act_func: str):
 
     return W, V, b, d, errors
 
-def visualize_errors(errors):
+
+def visualize_errors(errors: list):
     plt.plot(range(len(errors)), errors)
     # plt.plot(range(len(errors)), errors, 'bo')
     # plt.plot(range(len(errors)), errors)
     # plt.xticks(range(1, len(errors)))
     plt.locator_params(axis='x', nbins=10)
-    plt.title('Error analysis')
+    plt.title('Loss')
     plt.xlabel('Epoch')
     plt.ylabel('Error')
     plt.grid()
     plt.show()
 
-def visualize_points_clusters(x, y):
+
+def visualize_points_clusters(x: np.array, y: np.array):
     vector = x
     colors = ["red", "green", "blue", "purple", "orange"]
     color_idx = [i for i, x in enumerate(y) if x > 0][0]
@@ -166,7 +172,8 @@ def visualize_points_clusters(x, y):
     plt.xlabel('x')
     plt.ylabel('y')
 
-def do_inference(W, V, b, d, test_data, type_act_func: str):
+
+def do_inference(W: np.array, V: np.array, b: np.array, d: np.array, test_data: list, type_act_func: str):
     E = 0
     num_correct = 0
 
@@ -212,7 +219,7 @@ def get_xy_min_max(data: list):
     return min(x_values), max(x_values), min(y_values), max(y_values)
 
 
-def visualize_result(data, W, b, data_type: str):
+def visualize_result(data: list, W: np.array, b: np.array, data_type: str):
     x_min, x_max, y_min, y_max = get_xy_min_max(data)
 
     for i in range(len(data)):
