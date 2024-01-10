@@ -70,7 +70,7 @@ def visualize_data_histogram(data):
 
 
 def initialize_parameters():
-    num_neurons = 3  # K parameter
+    num_neurons = 4  # K parameter
     W = np.random.randn(num_neurons, 2)  # initializing random weights (dim output = 5, dim input vector = 2)
     V = np.random.randn(5, num_neurons)
 
@@ -79,7 +79,7 @@ def initialize_parameters():
 
     E_max = 1  # maximal error
     lr = 0.01
-    num_epochs = 1800  # TC_max
+    num_epochs = 1200  # TC_max
 
     return W, V, b, d, E_max, lr, num_epochs
 
@@ -89,21 +89,22 @@ def get_output_vector(u: float):
 
     return output_vec.reshape(-1, 1)
 
-def activation_function(x: np.array, activation_function: str):
-    if activation_function == "sigmoid":
+def activation_function(x: np.array, type_act_func: str):
+    if type_act_func == "sigmoid":
         return 1 / (1 + np.exp(-x))
 
-    elif activation_function == "ReLU":
-        return np.maximum(0, x)
+    elif type_act_func == "ReLU":
+        # return np.maximum(0, x)
+        return np.where(np.asarray(x) > 0, x, 0)
 
 def derivate_activation_function(f, activation_function: str):
     if activation_function == "sigmoid":
         return f * (1 - f)
 
     if activation_function == "ReLU":
-        return 1 * (f > 0)
+        return np.where(f > 0, 1, 0)
 
-def train_two_layered_nn(train_data: list):
+def train_two_layered_nn(train_data: list, type_act_func: str):
     W, V, b, d, E_max, lr, num_epochs = initialize_parameters()
 
     errors = []
@@ -117,15 +118,15 @@ def train_two_layered_nn(train_data: list):
 
             # Counting output
             x_k = np.array(x).reshape(-1, 1)
-            z_k = activation_function((np.dot(W, x_k) + b), "sigmoid")
-            y_k = activation_function((np.dot(V, z_k) + d), "sigmoid")
+            z_k = activation_function((np.dot(W, x_k) + b), type_act_func)
+            y_k = activation_function((np.dot(V, z_k) + d), type_act_func)
             y = y_k
 
             # Counting error
             E = E + np.dot(1 / 2, np.dot((u_vec - y).reshape(1, -1), (u_vec - y)))
 
-            dz = derivate_activation_function(z_k, "sigmoid")
-            dy = derivate_activation_function(y_k, "sigmoid")
+            dz = derivate_activation_function(z_k, type_act_func)
+            dy = derivate_activation_function(y_k, type_act_func)
 
             # Modification of the weights and biases
             W = W + np.dot(lr * ((u_vec - y) * dy * V).T, np.ones((5, 1))) * dz @ x_k.T
@@ -165,7 +166,7 @@ def visualize_points_clusters(x, y):
     plt.xlabel('x')
     plt.ylabel('y')
 
-def do_inference(W, V, b, d, test_data):
+def do_inference(W, V, b, d, test_data, type_act_func: str):
     E = 0
     num_correct = 0
 
@@ -177,8 +178,8 @@ def do_inference(W, V, b, d, test_data):
 
         # Counting output
         x_k = np.array(x).reshape(-1, 1)
-        z_k = activation_function((np.dot(W, x_k) + b), "sigmoid")
-        y_k = activation_function((np.dot(V, z_k) + d), "sigmoid")
+        z_k = activation_function((np.dot(W, x_k) + b), type_act_func)
+        y_k = activation_function((np.dot(V, z_k) + d), type_act_func)
         y = y_k
 
         y_max_idx = np.argmax(y)
@@ -240,15 +241,16 @@ if __name__ == "__main__":
     data_path = Path("./data/tren_data2___03.txt")
 
     data = load_data(data_path)
-    visualize_data(data)
-    visualize_data_histogram(data)
+    # visualize_data(data)
+    # visualize_data_histogram(data)
     random.shuffle(data)
     train_data, test_data = split_data_train_test(data)
 
-    W, V, b, d, errors = train_two_layered_nn(train_data)
+    act_func = "sigmoid"
+    W, V, b, d, errors = train_two_layered_nn(train_data, act_func)
     visualize_errors(errors)
 
-    test_error, test_accuracy = do_inference(W, V, b, d, test_data)
+    test_error, test_accuracy = do_inference(W, V, b, d, test_data, act_func)
     print(f"Test accuracy: {test_accuracy * 100} %")
 
     visualize_result(train_data, W, b, "train")
