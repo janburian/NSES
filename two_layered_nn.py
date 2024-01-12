@@ -80,6 +80,7 @@ def initialize_parameters():
     E_max = 1  # maximal error
     lr = 0.01
     num_epochs = 1200  # TC_max
+    # num_epochs = 10 # TC_max
 
     return W, V, b, d, E_max, lr, num_epochs
 
@@ -95,6 +96,9 @@ def activation_function(x: np.array, type_act_func: str):
     if type_act_func == "sigmoid":
         return np.exp(x) / (1 + np.exp(x))
 
+    elif type_act_func == "tanh":
+        return (np.exp(x) - np.exp(-x)) / (np.exp(x) + np.exp(-x))
+
     elif type_act_func == "ReLU":
         # return np.maximum(0, x)
         return np.where(np.asarray(x) > 0, x, 0)
@@ -104,7 +108,10 @@ def derivate_activation_function(f: np.array, activation_function: str):
     if activation_function == "sigmoid":
         return f * (1 - f)
 
-    if activation_function == "ReLU":
+    if activation_function == "tanh":
+        return 1 - (f ** 2)
+
+    elif activation_function == "ReLU":
         return np.where(f > 0, 1, 0)
 
 
